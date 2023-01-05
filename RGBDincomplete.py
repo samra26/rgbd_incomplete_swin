@@ -16,9 +16,9 @@ writer = SummaryWriter('log/run' + time.strftime("%d-%m"))
 im_size=(320,320)
 
 
-class JLModule(nn.Module):
+class RGBDInModule(nn.Module):
     def __init__(self, backbone):
-        super(JLModule, self).__init__()
+        super(RGBDInModule, self).__init__()
         self.backbone = backbone
         
 
@@ -38,15 +38,15 @@ class JLModule(nn.Module):
         return x
 
 
-class JL_DCF(nn.Module):
-    def __init__(self,JLModule):
-        super(JL_DCF, self).__init__()
+class RGBD_incomplete(nn.Module):
+    def __init__(self,RGBDInModule):
+        super(RGBD_incomplete, self).__init__()
         
-        self.JLModule = JLModule
+        self.RGBDInModule = RGBDInModule
 
         
     def forward(self, f_all):
-        x = self.JLModule(f_all)
+        x = self.RGBDInModule(f_all)
         return x
 
 
@@ -56,4 +56,4 @@ def build_model(network='cswin', base_model_cfg='cswin'):
       
    
 
-    return JL_DCF(JLModule(backbone))
+    return RGBD_incomplete(RGBDInModule(backbone))
