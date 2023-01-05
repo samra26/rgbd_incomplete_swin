@@ -32,7 +32,7 @@ class Solver(object):
         if config.mode == 'train':
             if self.config.load == '':
                 print("Loading pre-trained imagenet weights for fine tuning")
-                self.net.JLModule.load_pretrained_model(self.config.pretrained_model
+                self.net.RGBDInModule.load_pretrained_model(self.config.pretrained_model
                                                         if isinstance(self.config.pretrained_model, str)
                                                         else self.config.pretrained_model[self.config.network])
                 # load pretrained backbone
@@ -48,7 +48,7 @@ class Solver(object):
 
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=self.lr, weight_decay=self.wd)
 
-        #self.print_network(self.net, 'Conformer based SOD Structure')
+        #self.print_network(self.net, 'Incomplete modality RGBD SOD Structure')
 
     # print the network information and parameter numbers
     def print_network(self, model, name):
