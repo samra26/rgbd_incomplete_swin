@@ -13,44 +13,36 @@ from sklearn.model_selection import train_test_split
 random.seed(10)
 
 class DatasetGenerate(Dataset):
-    def __init__(self, img_folder, gt_folder, edge_folder, phase: str = 'train', transform=None, seed=None):
+    def __init__(self, img_folder, gt_folder, image_size, phase: str = 'train', transform=None, seed=None):
         self.images = sorted(glob.glob(img_folder + '/*'))
         self.gts = sorted(glob.glob(gt_folder + '/*'))
-        self.edges = sorted(glob.glob(edge_folder + '/*'))
         self.transform = transform
 
-        train_images, val_images, train_gts, val_gts, train_edges, val_edges = train_test_split(self.images, self.gts,
-                                                                                                self.edges,
-                                                                                                test_size=0.05,
-                                                                                                random_state=seed)
         if phase == 'train':
             self.images = train_images
             self.gts = train_gts
             self.edges = train_edges
-        elif phase == 'val':
-            self.images = val_images
-            self.gts = val_gts
-            self.edges = val_edges
+
         else:  # Testset
             pass
 
     def __getitem__(self, idx):
-        image = cv2.imread(self.images[idx])
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        mask = cv2.imread(self.gts[idx])
-        mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
-        edge = cv2.imread(self.edges[idx])
-        edge = cv2.cvtColor(edge, cv2.COLOR_BGR2GRAY)
+        im_name = self.images[idx]
+        gt_name = self.gts[idx]
+        sal_image , im_size= load_image( im_name, self.image_size)
+        sal_label,sal_edge = load_sal_label(gt_name, self.image_size)
 
-        if self.transform is not None:
-            augmented = self.transform(image=image, masks=[mask, edge])
-            image = augmented['image']
-            mask = np.expand_dims(augmented['masks'][0], axis=0)  # (1, H, W)
-            mask = mask / 255.0
-            edge = np.expand_dims(augmented['masks'][1], axis=0)  # (1, H, W)
-            edge = edge / 255.0
+        sal_image, sal_label = cv_random_crop_rgb(sal_image,  sal_label, self.image_size)
+        sal_image = sal_image.transpose((2, 0, 1))
+        sal_label = sal_label.transpose((2, 0, 1))
 
-        return image, mask, edge
+
+        image = torch.Tensor(sal_image)
+        mask = torch.Tensor(sal_label)
+ 
+ 
+
+        return image, mask
 
     def __len__(self):
         return len(self.images)
@@ -120,7 +112,7 @@ def get_loader(config, mode='train', pin=True):
     if mode == 'train':
         shuffle = True
         dataset1 = ImageDataTrain(config.train_root, config.train_list, config.image_size)
-        dataset2 = DatasetGenerate(img_folder, gt_folder, edge_folder, phase, transform, seed)
+        dataset2 = DatasetGenerate(config.img_folder, config.gt_folder,config.image_size , phase, transform, seed)
         dataset = torch.utils.data.ConcatDataset([dataset1, dataset2])
         data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle,
                                       num_workers=config.num_thread, pin_memory=pin)
@@ -193,6 +185,21 @@ def cv_random_crop(image, depth, label,image_size):
     label = cv2.resize(label, (image_size, image_size))
     label = label[..., np.newaxis]
     return image, depth, label
+
+def cv_random_crop_rgb(image,  label,image_size):
+    crop_size = int(0.0625*image_size)
+    croped = image_size - crop_size
+    top = random.randint(0, crop_size)  #crop rate 0.0625
+    left = random.randint(0, crop_size)
+
+    image = image[top: top + croped, left: left + croped, :]
+    
+    label = label[top: top + croped, left: left + croped, :]
+    image = cv2.resize(image, (image_size, image_size))
+
+    label = cv2.resize(label, (image_size, image_size))
+    label = label[..., np.newaxis]
+    return image, label
 
 def Normalization(image):
     in_ = image[:, :, ::-1]
