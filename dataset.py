@@ -108,7 +108,7 @@ def get_loader(config, mode='train', pin=True):
         dataset = torch.utils.data.ConcatDataset([dataset1, dataset2])
         data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle,
                                       num_workers=config.num_thread, pin_memory=pin)
-        print(f'{phase} length : {len(dataset)}')
+        print('dataset length',len(dataset))
     else:
         dataset = ImageDataTest(config.test_root, config.test_list, config.image_size)
         data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle,
