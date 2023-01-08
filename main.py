@@ -70,6 +70,8 @@ if __name__ == '__main__':
     # Train data
     parser.add_argument('--train_root', type=str, default='../RGBDcollection')
     parser.add_argument('--train_list', type=str, default='../RGBDcollection/train.lst')
+    parser.add_argument('--img_folder', type=str, default='../duts_tr_image')
+    parser.add_argument('--gt_folder', type=str, default='../duts_tr_mask')
     
 
     # Testing settings
