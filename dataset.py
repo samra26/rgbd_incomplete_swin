@@ -13,18 +13,10 @@ from sklearn.model_selection import train_test_split
 random.seed(10)
 
 class DatasetGenerate(Dataset):
-    def __init__(self, img_folder, gt_folder, image_size, phase: str = 'train', transform=None, seed=None):
+    def __init__(self, img_folder, gt_folder, image_size):
         self.images = sorted(glob.glob(img_folder + '/*'))
         self.gts = sorted(glob.glob(gt_folder + '/*'))
-        self.transform = transform
 
-        if phase == 'train':
-            self.images = train_images
-            self.gts = train_gts
-            self.edges = train_edges
-
-        else:  # Testset
-            pass
 
     def __getitem__(self, idx):
         im_name = self.images[idx]
@@ -112,7 +104,7 @@ def get_loader(config, mode='train', pin=True):
     if mode == 'train':
         shuffle = True
         dataset1 = ImageDataTrain(config.train_root, config.train_list, config.image_size)
-        dataset2 = DatasetGenerate(config.img_folder, config.gt_folder,config.image_size , phase, transform, seed)
+        dataset2 = DatasetGenerate(config.img_folder, config.gt_folder,config.image_size)
         dataset = torch.utils.data.ConcatDataset([dataset1, dataset2])
         data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle,
                                       num_workers=config.num_thread, pin_memory=pin)
