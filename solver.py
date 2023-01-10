@@ -131,7 +131,7 @@ class Solver(object):
                 sal_label_coarse = F.interpolate(sal_label, size_coarse, mode='bilinear', align_corners=True)
                 
                 sal_rgb_only = self.net(sal_image)
-                sal_rgb_only_loss =  F.binary_cross_entropy_with_logits(sal_rgb_only, sal_label, reduction='sum')
+                '''sal_rgb_only_loss =  F.binary_cross_entropy_with_logits(sal_rgb_only, sal_label, reduction='sum')
 
                 sal_rgb_only_loss = sal_rgb_only_loss/ (self.iter_size * self.config.batch_size)
                 r_sal_loss += sal_rgb_only_loss.data
@@ -164,6 +164,6 @@ class Solver(object):
             print('Epoch:[%2d/%2d] | Train Loss : %.3f' % (epoch, self.config.epoch,train_loss))
             
         # save model
-        torch.save(self.net.state_dict(), '%s/final.pth' % self.config.save_folder)
+        torch.save(self.net.state_dict(), '%s/final.pth' % self.config.save_folder)'''
         
 
