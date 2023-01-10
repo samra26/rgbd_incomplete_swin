@@ -117,8 +117,8 @@ class Solver(object):
             r_sal_loss_item=0
             for i, data_batch in enumerate(self.train_loader):
                 sal_image, sal_depth, sal_label= data_batch['sal_image'], data_batch['sal_depth'], data_batch['sal_label']
-                sal_image = data_batch['rgb_image']
-                sal_label= data_batch['rgb_label']
+                #sal_image = data_batch['rgb_image']
+                #sal_label= data_batch['rgb_label']
              
                 if (sal_image.size(2) != sal_label.size(2)) or (sal_image.size(3) != sal_label.size(3)):
                     print('IMAGE ERROR, PASSING```')
