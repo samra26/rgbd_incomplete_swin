@@ -34,8 +34,9 @@ class DatasetGenerate(Dataset):
         mask = torch.Tensor(sal_label)
  
  
-
-        return image, mask
+        sample = {'rgb_image': image,'rgb_label': mask}
+        return sample
+        
 
     def __len__(self):
         return len(self.images)
