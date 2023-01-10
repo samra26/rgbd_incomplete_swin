@@ -16,6 +16,7 @@ class DatasetGenerate(Dataset):
     def __init__(self, img_folder, gt_folder, image_size):
         self.images = sorted(glob.glob(img_folder + '/*'))
         self.gts = sorted(glob.glob(gt_folder + '/*'))
+        self.image_size = image_size
 
 
     def __getitem__(self, idx):
