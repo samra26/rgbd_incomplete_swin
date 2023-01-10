@@ -35,7 +35,7 @@ class RGBDInModule(nn.Module):
         x,x1= self.backbone(x)
         for i in range(len(x1)):
             print('The backbone features are',x1[i].shape)
-        return x
+        return x1
 
 
 class RGBD_incomplete(nn.Module):
@@ -46,8 +46,8 @@ class RGBD_incomplete(nn.Module):
 
         
     def forward(self, f_all):
-        x = self.RGBDInModule(f_all)
-        return x
+        x1 = self.RGBDInModule(f_all)
+        return x1[1]
 
 
 def build_model(network='cswin', base_model_cfg='cswin'):
