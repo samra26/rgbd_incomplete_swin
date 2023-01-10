@@ -116,14 +116,13 @@ class Solver(object):
             r_sal_loss = 0
             r_sal_loss_item=0
             for i, data_batch in enumerate(self.train_loader):
-                sal_image, sal_depth, sal_label, sal_edge,dq ,name= data_batch['sal_image'], data_batch['sal_depth'], data_batch[
-                    'sal_label'], data_batch['sal_edge'], data_batch['depth_quality_score'], data_batch['name']
+                sal_image, sal_depth, sal_label= data_batch['sal_image'], data_batch['sal_depth'], data_batch['sal_label']
                 if (sal_image.size(2) != sal_label.size(2)) or (sal_image.size(3) != sal_label.size(3)):
                     print('IMAGE ERROR, PASSING```')
                     continue
                 if self.config.cuda:
                     device = torch.device(self.config.device_id)
-                    sal_image, sal_depth, sal_label, sal_edge,dq= sal_image.to(device),sal_depth.to(device),sal_label.to(device),sal_edge.to(device),dq.to(device)
+                    sal_image, sal_depth, sal_label= sal_image.to(device),sal_depth.to(device),sal_label.to(device)
                 #print('imagename',name,'.....dq score',dq)
 
                
