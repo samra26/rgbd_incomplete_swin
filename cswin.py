@@ -356,11 +356,14 @@ class CSWinTransformer(nn.Module):
             for blk in blocks:
                 if self.use_chk:
                     x = checkpoint.checkpoint(blk, x)
+                    init_x.append(x)
                     #print('blk blocks n x',x.shape)
                 else:
                     x = blk(x)
+                    init_x.append(x)
                     #print('blk blocks n x',x.shape)
         x = self.norm(x)
+        init_x.append(x)
         #print('norm x',x.shape)
         return torch.mean(x, dim=1),init_x
 
