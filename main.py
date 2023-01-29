@@ -9,7 +9,7 @@ import time
 def main(config):
     if config.mode == 'train':
         train_loader = get_loader(config)
-        print('train dataset loaded',len(train_loader)
+        print('train dataset loaded',len(train_loader))
         if not os.path.exists("%s/demo-%s" % (config.save_folder, time.strftime("%d"))):
             os.mkdir("%s/demo-%s" % (config.save_folder, time.strftime("%d")))
         config.save_folder = "%s/demo-%s" % (config.save_folder, time.strftime("%d"))
