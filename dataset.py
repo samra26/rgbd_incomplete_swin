@@ -10,7 +10,7 @@ from pathlib import Path
 from albumentations.pytorch.transforms import ToTensorV2
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
-from pytorch_lightning.trainer.supporters import CombinedLoader
+#from pytorch_lightning.trainer.supporters import CombinedLoader
 random.seed(10)
 
 class DatasetGenerate(Dataset):
@@ -109,12 +109,9 @@ def get_loader(config, mode='train', pin=True):
         dataset1 = ImageDataTrain(config.train_root, config.train_list, config.image_size)
         dataset2 = DatasetGenerate(config.img_folder, config.gt_folder,config.image_size)
         
-        #dataset = torch.utils.data.ConcatDataset([dataset1, dataset2])
-        #data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle,num_workers=config.num_thread, pin_memory=pin)
-        data_loader1 = data.DataLoader(dataset=dataset1, batch_size=config.batch_size, shuffle=shuffle,num_workers=config.num_thread, pin_memory=pin)
-        data_loader2 = data.DataLoader(dataset=dataset2, batch_size=config.batch_size, shuffle=shuffle,num_workers=config.num_thread, pin_memory=pin)
-        combine_loader = [data_loader1,data_loader2]
-        data_loader = CombinedLoader(combine_loader, mode="max_size_cycle")
+        dataset = torch.utils.data.ConcatDataset([dataset1, dataset2])
+        data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle,num_workers=config.num_thread, pin_memory=pin)
+        
         #print('dataset length',len(dataset))
     else:
         dataset = ImageDataTest(config.test_root, config.test_list, config.image_size)
