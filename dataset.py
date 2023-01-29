@@ -196,7 +196,7 @@ def cv_random_crop_rgb(image,  label,image_size):
     image = cv2.resize(image, (image_size, image_size))
 
     label = cv2.resize(label, (image_size, image_size))
-    label = label[..., np.newaxis]
+    #label = label[..., np.newaxis]
     return image, label
 
 def Normalization(image):
