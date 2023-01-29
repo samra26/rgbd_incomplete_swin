@@ -116,7 +116,7 @@ class Solver(object):
             r_sal_loss = 0
             r_sal_loss_item=0
             for i, data_batch in enumerate(self.train_loader):
-                sal_image, sal_label,sal_rgb,mask= data_batch[0], data_batch[1],data_batch[2],data_batch[3]
+                sal_image, sal_label= data_batch[0], data_batch[1]
                 #sal_image,sal_depth, sal_label,sal_rgb,mask= data_batch
                 #sal_image = data_batch['rgb_image']
                 #sal_label= data_batch['rgb_label']
