@@ -74,7 +74,7 @@ class ImageDataTrain(data.Dataset):
         sal_edge = torch.Tensor(sal_edge)
         dq=depth_quality_score(sal_depth)
         #sample = {'sal_image': sal_image, 'sal_depth': sal_depth, 'sal_label': sal_label, 'sal_edge': sal_edge,'depth_quality_score':dq,'name': self.sal_list[item % self.sal_num].split()[0].split('/')[1]}
-        return sal_image,sal_depth_sal_label
+        return sal_image,sal_depth,sal_label
 
     def __len__(self):
         return self.sal_num
