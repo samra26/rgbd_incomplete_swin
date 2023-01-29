@@ -107,7 +107,8 @@ def get_loader(config, mode='train', pin=True):
         shuffle = True
         dataset1 = ImageDataTrain(config.train_root, config.train_list, config.image_size)
         dataset2 = DatasetGenerate(config.img_folder, config.gt_folder,config.image_size)
-        dataset = torch.utils.data.ConcatDataset({**dataset1, **dataset2})
+        print(dataset1)
+        dataset = torch.utils.data.ConcatDataset([dataset1, dataset2])
         data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle,
                                       num_workers=config.num_thread, pin_memory=pin)
         print('dataset length',len(dataset))
