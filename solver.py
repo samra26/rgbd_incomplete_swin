@@ -115,9 +115,9 @@ class Solver(object):
         for epoch in range(self.config.epoch):
             r_sal_loss = 0
             r_sal_loss_item=0
-            for i, data_batch in enumerate(self.train_loader):
+            for i, (sal_image,sal_depth, sal_label,sal_rgb,mask) in enumerate(self.train_loader):
                 #sal_depth, sal_label,sal_image= data_batch['sal_depth'], data_batch['sal_label'],data_batch['sal_image'] 
-                sal_image,sal_depth, sal_label,sal_rgb,mask= data_batch
+                #sal_image,sal_depth, sal_label,sal_rgb,mask= data_batch
                 #sal_image = data_batch['rgb_image']
                 #sal_label= data_batch['rgb_label']
              
@@ -126,7 +126,7 @@ class Solver(object):
                     continue
                 if self.config.cuda:
                     device = torch.device(self.config.device_id)
-                    sal_image, sal_depth, sal_label= sal_image.to(device),sal_depth.to(device),sal_label.to(device)
+                    sal_image, sal_depth, sal_label,sal_rgb,mask= sal_image.to(device),sal_depth.to(device),sal_label.to(device),sal_rgb.to(device),mask.to(device)
                 #print('imagename',name,'.....dq score',dq)
 
                
