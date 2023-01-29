@@ -25,7 +25,7 @@ class DatasetGenerate(Dataset):
         im_name = self.images[idx]
         gt_name = self.gts[idx]
         sal_image , im_size= load_image( im_name, self.image_size)
-        sal_label,sal_edge = load_sal_label(gt_name, self.image_size)
+        sal_label,sal_edge = load_image(gt_name, self.image_size)
 
         sal_image, sal_label = cv_random_crop_rgb(sal_image,  sal_label, self.image_size)
         sal_image = sal_image.transpose((2, 0, 1))
@@ -61,7 +61,7 @@ class ImageDataTrain(data.Dataset):
         gt_name = self.sal_list[item % self.sal_num].split()[2]
         sal_image , im_size= load_image(os.path.join(self.sal_root, im_name), self.image_size)
         sal_depth, im_size = load_image(os.path.join(self.sal_root, de_name), self.image_size)
-        sal_label,sal_edge = load_sal_label(os.path.join(self.sal_root, gt_name), self.image_size)
+        sal_label,sal_edge = load_image(os.path.join(self.sal_root, gt_name), self.image_size)
 
         sal_image, sal_depth, sal_label = cv_random_crop(sal_image, sal_depth, sal_label, self.image_size)
         sal_image = sal_image.transpose((2, 0, 1))
@@ -112,7 +112,7 @@ def get_loader(config, mode='train', pin=True):
         dataset2 = DatasetGenerate(config.img_folder, config.gt_folder,config.image_size)
         
         dataset = torch.utils.data.ConcatDataset([dataset1, dataset2])
-        data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle,num_workers=config.num_thread, pin_memory=pin,collate_fn=lambda x,y: x+y)
+        data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle,num_workers=config.num_thread, pin_memory=pin)
         
         #print('dataset length',len(dataset))
     else:
