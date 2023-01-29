@@ -111,7 +111,7 @@ def get_loader(config, mode='train', pin=True):
         dataset2 = DatasetGenerate(config.img_folder, config.gt_folder,config.image_size)
         
         dataset = torch.utils.data.ConcatDataset([dataset1, dataset2])
-        data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle,num_workers=config.num_thread, pin_memory=pin,sampler=ImbalancedDatasetSampler(dataset))
+        data_loader = data.DataLoader(dataset=dataset, batch_size=config.batch_size, shuffle=shuffle,num_workers=config.num_thread, pin_memory=pin)
         
         #print('dataset length',len(dataset))
     else:
