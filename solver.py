@@ -115,7 +115,7 @@ class Solver(object):
         for epoch in range(self.config.epoch):
             r_sal_loss = 0
             r_sal_loss_item=0
-            for i, ((sal_image,sal_depth, sal_label),(sal_rgb,mask)) in enumerate(self.train_loader):
+            for i, (sal_image,sal_depth, sal_label),(sal_rgb,mask) in enumerate(self.train_loader):
                 #sal_depth, sal_label,sal_image= data_batch['sal_depth'], data_batch['sal_label'],data_batch['sal_image'] 
                 #sal_image,sal_depth, sal_label,sal_rgb,mask= data_batch
                 #sal_image = data_batch['rgb_image']
