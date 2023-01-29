@@ -25,7 +25,7 @@ class DatasetGenerate(Dataset):
         im_name = self.images[idx]
         gt_name = self.gts[idx]
         sal_image , im_size= load_image( im_name, self.image_size)
-        sal_label,sal_edge = load_image(gt_name, self.image_size)
+        sal_label,sal_edge = load_sal_label(gt_name, self.image_size)
 
         sal_image, sal_label = cv_random_crop_rgb(sal_image,  sal_label, self.image_size)
         sal_image = sal_image.transpose((2, 0, 1))
@@ -61,7 +61,7 @@ class ImageDataTrain(data.Dataset):
         gt_name = self.sal_list[item % self.sal_num].split()[2]
         sal_image , im_size= load_image(os.path.join(self.sal_root, im_name), self.image_size)
         sal_depth, im_size = load_image(os.path.join(self.sal_root, de_name), self.image_size)
-        sal_label,sal_edge = load_image(os.path.join(self.sal_root, gt_name), self.image_size)
+        sal_label,sal_edge = load_sal_label(os.path.join(self.sal_root, gt_name), self.image_size)
 
         sal_image, sal_depth, sal_label = cv_random_crop(sal_image, sal_depth, sal_label, self.image_size)
         sal_image = sal_image.transpose((2, 0, 1))
@@ -181,7 +181,7 @@ def cv_random_crop(image, depth, label,image_size):
     image = cv2.resize(image, (image_size, image_size))
     depth = cv2.resize(depth, (image_size, image_size))
     label = cv2.resize(label, (image_size, image_size))
-    #label = label[..., np.newaxis]
+    label = label[..., np.newaxis]
     return image, depth, label
 
 def cv_random_crop_rgb(image,  label,image_size):
@@ -196,7 +196,7 @@ def cv_random_crop_rgb(image,  label,image_size):
     image = cv2.resize(image, (image_size, image_size))
 
     label = cv2.resize(label, (image_size, image_size))
-    #label = label[..., np.newaxis]
+    label = label[..., np.newaxis]
     return image, label
 
 def Normalization(image):
