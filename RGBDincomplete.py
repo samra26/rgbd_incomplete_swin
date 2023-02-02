@@ -35,7 +35,7 @@ class RGBDInModule(nn.Module):
         x,x1= self.backbone(x)
         a=[1,5,37,40]
         for i in a:
-            #print(i,'The backbone features are',x1[i].shape)
+            print(i,'The backbone features are',x1[i].shape)
             B, new_HW, C = x1[i].shape
             H = W = int(np.sqrt(new_HW))
             feature_stage.append(x.transpose(-2, -1).contiguous().view(B, C, H, W))
