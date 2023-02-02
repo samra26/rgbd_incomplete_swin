@@ -31,11 +31,16 @@ class RGBDInModule(nn.Module):
         
 
     def forward(self, x):
-
+        feature_stage=[]
         x,x1= self.backbone(x)
-        for i in range(len(x1)):
-            print(i,'The backbone features are',x1[i].shape)
-        return x1
+        a=[1,5,37,40]
+        for i in a:
+            #print(i,'The backbone features are',x1[i].shape)
+            B, new_HW, C = x1[i].shape
+            H = W = int(np.sqrt(new_HW))
+            feature_stage.append(x.transpose(-2, -1).contiguous().view(B, C, H, W))
+        print(feature_stage)
+        return feature_stage
 
 
 class RGBD_incomplete(nn.Module):
@@ -46,8 +51,8 @@ class RGBD_incomplete(nn.Module):
 
         
     def forward(self, f_all):
-        x1 = self.RGBDInModule(f_all)
-        return x1[1]
+        feat_rgb = self.RGBDInModule(f_all)
+        return feat_rgb[0]
 
 
 def build_model(network='cswin', base_model_cfg='cswin'):
