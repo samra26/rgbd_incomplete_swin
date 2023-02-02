@@ -37,8 +37,15 @@ class RGBDInModule(nn.Module):
         for i in a:
             print(i,'The backbone features are',x1[i].shape)
             B, new_HW, C = x1[i].shape
+            print(B,new_HW,C)
             H = W = int(np.sqrt(new_HW))
-            feature_stage.append(x.transpose(-2, -1).contiguous().view(B, C, H, W))
+            print(H,W)
+            temp=x.transpose(-2, -1).contiguous()
+            print(temp.shape)
+            temp2=temp.view(B, C, H, W)
+            print(temp2.shape)
+            feature_stage.append(temp.view(B, C, H, W))
+            
         print(feature_stage)
         return feature_stage
 
