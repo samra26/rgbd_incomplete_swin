@@ -34,7 +34,7 @@ class RGBDInModule(nn.Module):
 
         x,x1= self.backbone(x)
         for i in range(len(x1)):
-            print('The backbone features are',x1[i].shape)
+            print(i,'The backbone features are',x1[i].shape)
         return x1
 
 
