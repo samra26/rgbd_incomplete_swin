@@ -14,7 +14,7 @@ from torch.utils.tensorboard import SummaryWriter
 from torchvision.utils import make_grid
 writer = SummaryWriter('log/run' + time.strftime("%d-%m"))
 im_size=(320,320)
-
+k_channels=[144,288,576,1152]
 
 class RGBDInModule(nn.Module):
     def __init__(self, backbone):
@@ -48,10 +48,22 @@ class RGBD_incomplete(nn.Module):
         super(RGBD_incomplete, self).__init__()
         
         self.RGBDInModule = RGBDInModule
+        self.conv_stage1=nn.Sequential(nn.Conv2d(k_channels[0], int(k_channels[0] / 1), 1), self.relu)
+        self.conv_stage2=nn.Sequential(nn.Conv2d(k_channels[1], int(k_channels[1] / 2), 1), self.relu)
+        self.conv_stage3=nn.Sequential(nn.Conv2d(k_channels[2], int(k_channels[2] / 4), 1), self.relu)
+        self.conv_stage4=nn.Sequential(nn.Conv2d(k_channels[3], int(k_channels[3] / 8), 1), self.relu)
 
         
     def forward(self, f_all):
         feat_rgb = self.RGBDInModule(f_all)
+        rgb_branch1 = self.conv_stage1(feat_rgb[0])
+        rgb_branch2 = self.conv_stage1(feat_rgb[1])
+        rgb_branch3 = self.conv_stage1(feat_rgb[2])
+        rgb_branch4 = self.conv_stage1(feat_rgb[3])
+        print(rgb_branch1.shape)
+        print(rgb_branch2.shape)
+        print(rgb_branch3.shape)
+        print(rgb_branch4.shape)
         return feat_rgb[0]
 
 
