@@ -48,6 +48,7 @@ class RGBD_incomplete(nn.Module):
         super(RGBD_incomplete, self).__init__()
         
         self.RGBDInModule = RGBDInModule
+        self.relu = nn.ReLU(inplace=True)
         self.conv_stage1=nn.Sequential(nn.Conv2d(k_channels[0], int(k_channels[0] / 1), 1), self.relu)
         self.conv_stage2=nn.Sequential(nn.Conv2d(k_channels[1], int(k_channels[1] / 2), 1), self.relu)
         self.conv_stage3=nn.Sequential(nn.Conv2d(k_channels[2], int(k_channels[2] / 4), 1), self.relu)
