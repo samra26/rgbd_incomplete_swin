@@ -40,7 +40,7 @@ class RGBDInModule(nn.Module):
             print(B,new_HW,C)
             H = W = int(np.sqrt(new_HW))
             print(H,W)
-            temp=x.transpose(-2, -1).contiguous()
+            temp=x1[i].transpose(-2, -1).contiguous()
             print(temp.shape)
             temp2=temp.view(B, C, H, W)
             print(temp2.shape)
