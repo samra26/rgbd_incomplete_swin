@@ -35,7 +35,7 @@ class RGBDInModule(nn.Module):
         x,x1= self.backbone(x)
         a=[1,5,37,40]
         for i in a:
-            print(i,'The backbone features are',x1[i].shape)
+            #print(i,'The backbone features are',x1[i].shape)
             B, new_HW, C = x1[i].shape
             H = W = int(np.sqrt(new_HW))
             feature_stage.append(x1[i].transpose(-2, -1).contiguous().view(B, C, H, W))
@@ -70,13 +70,13 @@ class RGBD_incomplete(nn.Module):
         rgb_out2 = self.deconv_stage2(rgb_branch2)
         rgb_out3 = self.deconv_stage3(rgb_branch3)
         rgb_out4 = self.deconv_stage4(rgb_branch4)
-        print(rgb_branch1.shape,rgb_out1.shape)
+        '''print(rgb_branch1.shape,rgb_out1.shape)
         print(rgb_branch2.shape,rgb_out2.shape)
         print(rgb_branch3.shape,rgb_out3.shape)
-        print(rgb_branch4.shape,rgb_out4.shape)
+        print(rgb_branch4.shape,rgb_out4.shape)'''
         
         feat_rgb_out=self.last_conv(torch.cat((rgb_out1,rgb_out2,rgb_out3,rgb_out4),dim=1))
-        print(feat_rgb_out.shape)
+        #print(feat_rgb_out.shape)
         
         return feat_rgb[0]
 
