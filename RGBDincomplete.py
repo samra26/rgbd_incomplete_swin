@@ -57,6 +57,7 @@ class RGBD_incomplete(nn.Module):
         self.deconv_stage2=nn.ConvTranspose2d(144,1,kernel_size=3, stride=8, padding=0, output_padding=3, dilation=2)
         self.deconv_stage3=nn.ConvTranspose2d(144,1,kernel_size=5, stride=16, padding=0, output_padding=3, dilation=3)
         self.deconv_stage4=nn.ConvTranspose2d(144,1,kernel_size=7, stride=32, padding=1, output_padding=3, dilation=5)
+        self.last_conv=nn.Conv2d(4,1,1,1)
 
         
     def forward(self, f_all):
@@ -74,8 +75,9 @@ class RGBD_incomplete(nn.Module):
         print(rgb_branch3.shape,rgb_out3.shape)
         print(rgb_branch4.shape,rgb_out4.shape)
         
-        feat_rgb_out=torch.cat((rgb_out1,rgb_out2,rgb_out3,rgb_out4),dim=1)
+        feat_rgb_out=self.last_conv(torch.cat((rgb_out1,rgb_out2,rgb_out3,rgb_out4),dim=1))
         print(feat_rgb_out.shape)
+        
         return feat_rgb[0]
 
 
