@@ -78,7 +78,7 @@ class RGBD_incomplete(nn.Module):
         feat_rgb_out=self.last_conv(torch.cat((rgb_out1,rgb_out2,rgb_out3,rgb_out4),dim=1))
         #print(feat_rgb_out.shape)
         
-        return feat_rgb[0]
+        return feat_rgb_out
 
 
 def build_model(network='cswin', base_model_cfg='cswin'):
