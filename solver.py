@@ -117,7 +117,7 @@ class Solver(object):
             r_sal_loss_item=0
             for i, data_batch in enumerate(self.train_loader):
                 sal_image, sal_label= data_batch[0], data_batch[1]
-                print(sal_image.shape)
+                #print(sal_image.shape)
                 #sal_image,sal_depth, sal_label,sal_rgb,mask= data_batch
                 #sal_image = data_batch['rgb_image']
                 #sal_label= data_batch['rgb_label']
@@ -132,10 +132,10 @@ class Solver(object):
 
                
                 self.optimizer.zero_grad()
-                sal_label_coarse = F.interpolate(sal_label, size_coarse, mode='bilinear', align_corners=True)
+                #sal_label_coarse = F.interpolate(sal_label, size_coarse, mode='bilinear', align_corners=True)
                 
                 sal_rgb_only = self.net(sal_image)
-                '''sal_rgb_only_loss =  F.binary_cross_entropy_with_logits(sal_rgb_only, sal_label, reduction='sum')
+                sal_rgb_only_loss =  F.binary_cross_entropy_with_logits(sal_rgb_only, sal_label, reduction='sum')
 
                 sal_rgb_only_loss = sal_rgb_only_loss/ (self.iter_size * self.config.batch_size)
                 r_sal_loss += sal_rgb_only_loss.data
@@ -154,7 +154,7 @@ class Solver(object):
                     fsal = sal_rgb_only[0].clone()
                     fsal = fsal.sigmoid().data.cpu().numpy().squeeze()
                     fsal = (fsal - fsal.min()) / (fsal.max() - fsal.min() + 1e-8)
-                    writer.add_image('sal_final', torch.tensor(fsal), i, dataformats='HW')
+                    writer.add_image('sal_rgb_final', torch.tensor(fsal), i, dataformats='HW')
                     grid_image = make_grid(sal_label[0].clone().cpu().data, 1, normalize=True)
 
                    
@@ -168,6 +168,6 @@ class Solver(object):
             print('Epoch:[%2d/%2d] | Train Loss : %.3f' % (epoch, self.config.epoch,train_loss))
             
         # save model
-        torch.save(self.net.state_dict(), '%s/final.pth' % self.config.save_folder)'''
+        torch.save(self.net.state_dict(), '%s/final.pth' % self.config.save_folder)
         
 
