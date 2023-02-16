@@ -16,10 +16,37 @@ writer = SummaryWriter('log/run' + time.strftime("%d-%m"))
 im_size=(320,320)
 k_channels=[144,288,576,1152]
 
+class FCUUp(nn.Module):
+    """ Transformer patch embeddings -> CNN feature maps
+    """
+
+    def __init__(self, inplanes, outplanes, up_stride, act_layer=nn.ReLU,
+                 norm_layer=partial(nn.BatchNorm2d, eps=1e-6),):
+        super(FCUUp, self).__init__()
+
+        self.up_stride = up_stride
+        self.conv_project = nn.Conv2d(inplanes, outplanes, kernel_size=1, stride=1, padding=0)
+        self.bn = norm_layer(outplanes)
+        self.act = act_layer()
+
+    def forward(self, x, H, W):
+        B, _, C = x.shape
+        # [N, 197, 384] -> [N, 196, 384] -> [N, 384, 196] -> [N, 384, 14, 14]
+        x_r = x[:, 1:].transpose(1, 2).reshape(B, C, H, W)
+        x_r = self.act(self.bn(self.conv_project(x_r)))
+
+        return F.interpolate(x_r, size=(H * self.up_stride, W * self.up_stride))
+
+
 class RGBDInModule(nn.Module):
-    def __init__(self, backbone):
+    def __init__(self, backbone,inplanes, outplanes, 
+                 act_layer=nn.ReLU,
+                 norm_layer=partial(nn.BatchNorm2d, eps=1e-6),):
         super(RGBDInModule, self).__init__()
         self.backbone = backbone
+        self.conv_project = nn.Conv2d(inplanes, outplanes, kernel_size=1, stride=1, padding=0)
+        self.bn = norm_layer(outplanes)
+        self.act = act_layer()
         
 
     def load_pretrained_model(self, model_path):
@@ -38,7 +65,11 @@ class RGBDInModule(nn.Module):
             #print(i,'The backbone features are',x1[i].shape)
             B, new_HW, C = x1[i].shape
             H = W = int(np.sqrt(new_HW))
-            feature_stage.append(x1[i].transpose(-2, -1).contiguous().view(B, C, H, W))
+            x_t=x1[i].transpose(-2, -1).contiguous().view(B, C, H, W)
+            x_r = self.act(self.bn(self.conv_project(x_t)))
+            print(i,x_r.shape)
+            feature_stage.append(x_r)
+            
 
         return feature_stage
 
