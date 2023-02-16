@@ -40,9 +40,7 @@ class RGBDInModule(nn.Module):
         self.backbone = backbone
         for i in range(4):
             self.add_module('expand_block_' + str(i), FCU(k_channels[i], k_channels[i]))
-        #self.conv_project = nn.Conv2d(inplanes, outplanes, kernel_size=1, stride=1, padding=0)
-        #self.bn = norm_layer(outplanes)
-        #self.act = act_layer()
+
         
 
     def load_pretrained_model(self, model_path):
@@ -63,9 +61,8 @@ class RGBDInModule(nn.Module):
             B, new_HW, C = x1[i].shape
             H = W = int(np.sqrt(new_HW))
             x_t=x1[i].transpose(-2, -1).contiguous().view(B, C, H, W)
-            #x_r = self.act(self.bn(self.conv_project(x_t)))
             x_r=eval('self.expand_block_' + str(count))(x_t)
-            print(i,x_r.shape)
+            #print(i,x_r.shape)
             count=count+1
             feature_stage.append(x_r)
             
@@ -100,13 +97,13 @@ class RGBD_incomplete(nn.Module):
         rgb_out2 = self.deconv_stage2(rgb_branch2)
         rgb_out3 = self.deconv_stage3(rgb_branch3)
         rgb_out4 = self.deconv_stage4(rgb_branch4)
-        print(rgb_branch1.shape,rgb_out1.shape)
+        '''print(rgb_branch1.shape,rgb_out1.shape)
         print(rgb_branch2.shape,rgb_out2.shape)
         print(rgb_branch3.shape,rgb_out3.shape)
-        print(rgb_branch4.shape,rgb_out4.shape)
+        print(rgb_branch4.shape,rgb_out4.shape)'''
         
         feat_rgb_out=self.last_conv(torch.cat((rgb_out1,rgb_out2,rgb_out3,rgb_out4),dim=1))
-        print(feat_rgb_out.shape)
+        #print(feat_rgb_out.shape)
         
         return feat_rgb_out
 
