@@ -16,16 +16,33 @@ writer = SummaryWriter('log/run' + time.strftime("%d-%m"))
 im_size=(320,320)
 k_channels=[144,288,576,1152]
 
+class FCU(nn.Module):
+    """ Transformer patch embeddings -> CNN feature maps
+    """
 
-class RGBDInModule(nn.Module):
-    def __init__(self, backbone,inplanes, outplanes, 
-                 act_layer=nn.ReLU,
+    def __init__(self, inplanes, outplanes,  act_layer=nn.ReLU,
                  norm_layer=partial(nn.BatchNorm2d, eps=1e-6),):
-        super(RGBDInModule, self).__init__()
-        self.backbone = backbone
+        super(FCU, self).__init__()
+
+        
         self.conv_project = nn.Conv2d(inplanes, outplanes, kernel_size=1, stride=1, padding=0)
         self.bn = norm_layer(outplanes)
         self.act = act_layer()
+
+    def forward(self, x):
+        x_r = self.act(self.bn(self.conv_project(x)))
+
+        return x_r
+
+class RGBDInModule(nn.Module):
+    def __init__(self, backbone):
+        super(RGBDInModule, self).__init__()
+        self.backbone = backbone
+        for i in range(4):
+            self.add_module('expand_block_' + str(i), FCU(k_channels[i], k_channels[i]))
+        #self.conv_project = nn.Conv2d(inplanes, outplanes, kernel_size=1, stride=1, padding=0)
+        #self.bn = norm_layer(outplanes)
+        #self.act = act_layer()
         
 
     def load_pretrained_model(self, model_path):
@@ -40,13 +57,16 @@ class RGBDInModule(nn.Module):
         feature_stage=[]
         x,x1= self.backbone(x)
         a=[1,5,37,40]
+        count=0
         for i in a:
             #print(i,'The backbone features are',x1[i].shape)
             B, new_HW, C = x1[i].shape
             H = W = int(np.sqrt(new_HW))
             x_t=x1[i].transpose(-2, -1).contiguous().view(B, C, H, W)
-            x_r = self.act(self.bn(self.conv_project(x_t)))
+            #x_r = self.act(self.bn(self.conv_project(x_t)))
+            x_r=eval('self.expand_block_' + str(count))(x_t)
             print(i,x_r.shape)
+            count=count+1
             feature_stage.append(x_r)
             
 
@@ -97,4 +117,4 @@ def build_model(network='cswin', base_model_cfg='cswin'):
       
    
 
-    return RGBD_incomplete(RGBDInModule(backbone,k_channels,k_channels))
+    return RGBD_incomplete(RGBDInModule(backbone))
