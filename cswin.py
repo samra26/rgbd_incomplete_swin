@@ -190,6 +190,7 @@ class CSWinBlock(nn.Module):
         """
 
         H = W = self.patches_resolution
+        print(x.shape)
         B, L, C = x.shape
         assert L == H * W, "flatten img_tokens has wrong size"
         img = self.norm1(x)
