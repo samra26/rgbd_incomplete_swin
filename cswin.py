@@ -341,13 +341,18 @@ class CSWinTransformer(nn.Module):
         init_x=[]
         #print('initial features',x.shape)
         x = self.stage1_conv_embed(x)
+        B,L,C = x.shape
         for blk in self.stage1:
             if self.use_chk:
                 x = checkpoint.checkpoint(blk, x)
+                B, L, C = x.shape
+                x = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
                 init_x.append(x)
                 #print('blk stage 1 with use_chk',x.shape)
             else:
                 x = blk(x)
+                B, L, C = x.shape
+                x = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
                 init_x.append(x)
                 #print('blk stage 1 woithout use_chk',x.shape)
         for pre, blocks in zip([self.merge1, self.merge2, self.merge3], 
@@ -356,13 +361,19 @@ class CSWinTransformer(nn.Module):
             for blk in blocks:
                 if self.use_chk:
                     x = checkpoint.checkpoint(blk, x)
+                    B, L, C = x.shape
+                    x = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
                     init_x.append(x)
                     #print('blk blocks n x',x.shape)
                 else:
                     x = blk(x)
+                    B, L, C = x.shape
+                    x = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
                     init_x.append(x)
                     #print('blk blocks n x',x.shape)
         x = self.norm(x)
+        B, L, C = x.shape
+        x = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
         init_x.append(x)
         #print('norm x',x.shape)
         return torch.mean(x, dim=1),init_x
