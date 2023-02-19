@@ -38,8 +38,8 @@ class RGBDInModule(nn.Module):
     def __init__(self, backbone):
         super(RGBDInModule, self).__init__()
         self.backbone = backbone
-        '''for i in range(4):
-            self.add_module('expand_block_' + str(i), FCU(k_channels[i], k_channels[i]))'''
+        for i in range(4):
+            self.add_module('expand_block_' + str(i), FCU(k_channels[i], k_channels[i]))
 
         
 
@@ -56,21 +56,18 @@ class RGBDInModule(nn.Module):
         x,x1= self.backbone(x)
         for i in range(len(x1)):
             print("stage",i,x1[i].shape)
-        '''a=[1,5,37,40]
+        a=[1,5,37,40]
         count=0
         for i in a:
             print(i,'The backbone features are',x1[i].shape)
-            B, new_HW, C = x1[i].shape
-            H = W = int(np.sqrt(new_HW))
-            x_t=x1[i].transpose(-2, -1).contiguous().view(B, C, H, W)
-            x_r=eval('self.expand_block_' + str(count))(x_t)
+            x_r=eval('self.expand_block_' + str(count))(x1[i])
             #print(i,x_r.shape)
             count=count+1
-            feature_stage.append(x_r)'''
+            feature_stage.append(x_r)
             
 
-        #return feature_stage
-        return x
+        return feature_stage
+        
 
 
 class RGBD_incomplete(nn.Module):
@@ -93,24 +90,24 @@ class RGBD_incomplete(nn.Module):
     def forward(self, f_all):
         feat_rgb = self.RGBDInModule(f_all)
         
-        '''rgb_branch1 = self.conv_stage1(feat_rgb[0])
+        rgb_branch1 = self.conv_stage1(feat_rgb[0])
         rgb_branch2 = self.conv_stage2(feat_rgb[1])
         rgb_branch3 = self.conv_stage3(feat_rgb[2])
         rgb_branch4 = self.conv_stage4(feat_rgb[3])
         rgb_out1 = self.deconv_stage1(rgb_branch1)
         rgb_out2 = self.deconv_stage2(rgb_branch2)
         rgb_out3 = self.deconv_stage3(rgb_branch3)
-        rgb_out4 = self.deconv_stage4(rgb_branch4)'''
-        '''print(rgb_branch1.shape,rgb_out1.shape)
+        rgb_out4 = self.deconv_stage4(rgb_branch4)
+        print(rgb_branch1.shape,rgb_out1.shape)
         print(rgb_branch2.shape,rgb_out2.shape)
         print(rgb_branch3.shape,rgb_out3.shape)
-        print(rgb_branch4.shape,rgb_out4.shape)'''
+        print(rgb_branch4.shape,rgb_out4.shape)
         
-        #feat_rgb_out=self.last_conv(torch.cat((rgb_out1,rgb_out2,rgb_out3,rgb_out4),dim=1))
-        #print(feat_rgb_out.shape)
+        feat_rgb_out=self.last_conv(torch.cat((rgb_out1,rgb_out2,rgb_out3,rgb_out4),dim=1))
+        print(feat_rgb_out.shape)
         
-        #return feat_rgb_out
-        return feat_rgb
+        return feat_rgb_out
+        
 
 
 def build_model(network='cswin', base_model_cfg='cswin'):
