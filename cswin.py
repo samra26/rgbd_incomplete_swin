@@ -190,7 +190,7 @@ class CSWinBlock(nn.Module):
         """
 
         H = W = self.patches_resolution
-        print("at193",x.shape)
+        #print("at193",x.shape)
         B, L, C = x.shape
         assert L == H * W, "flatten img_tokens has wrong size"
         img = self.norm1(x)
@@ -340,7 +340,7 @@ class CSWinTransformer(nn.Module):
     def forward_features(self, x):
         B = x.shape[0]
         init_x=[]
-        print('initial features',x.shape)
+        #print('initial features',x.shape)
         x = self.stage1_conv_embed(x)
         B,L,C = x.shape
         for blk in self.stage1:
