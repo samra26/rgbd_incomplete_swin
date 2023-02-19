@@ -347,14 +347,14 @@ class CSWinTransformer(nn.Module):
             if self.use_chk:
                 x = checkpoint.checkpoint(blk, x)
                 B, L, C = x.shape
-                x = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
-                init_x.append(x)
+                x1 = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
+                init_x.append(x1)
                 #print('blk stage 1 with use_chk',x.shape)
             else:
                 x = blk(x)
                 B, L, C = x.shape
-                x = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
-                init_x.append(x)
+                x1 = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
+                init_x.append(x1)
                 #print('blk stage 1 woithout use_chk',x.shape)
         for pre, blocks in zip([self.merge1, self.merge2, self.merge3], 
                                [self.stage2, self.stage3, self.stage4]):
@@ -363,19 +363,19 @@ class CSWinTransformer(nn.Module):
                 if self.use_chk:
                     x = checkpoint.checkpoint(blk, x)
                     B, L, C = x.shape
-                    x = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
-                    init_x.append(x)
+                    x1 = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
+                    init_x.append(x1)
                     #print('blk blocks n x',x.shape)
                 else:
                     x = blk(x)
                     B, L, C = x.shape
-                    x = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
-                    init_x.append(x)
+                    x1 = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
+                    init_x.append(x1)
                     #print('blk blocks n x',x.shape)
         x = self.norm(x)
         B, L, C = x.shape
-        x = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
-        init_x.append(x)
+        x1 = x.view(B, int(np.sqrt(L)), int(np.sqrt(L)),-1).permute(0, 3, 1, 2).contiguous()
+        init_x.append(x1)
         #print('norm x',x.shape)
         return torch.mean(x, dim=1),init_x
 
