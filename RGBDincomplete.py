@@ -80,10 +80,10 @@ class RGBD_incomplete(nn.Module):
         self.conv_stage2=nn.Sequential(nn.Conv2d(k_channels[1], int(k_channels[1] / 2), 1), self.relu)
         self.conv_stage3=nn.Sequential(nn.Conv2d(k_channels[2], int(k_channels[2] / 4), 1), self.relu)
         self.conv_stage4=nn.Sequential(nn.Conv2d(k_channels[3], int(k_channels[3] / 8), 1), self.relu)
-        self.deconv_stage1=nn.ConvTranspose2d(144,1,kernel_size=3, stride=4, padding=0, output_padding=1, dilation=1)
-        self.deconv_stage2=nn.ConvTranspose2d(144,1,kernel_size=3, stride=8, padding=0, output_padding=3, dilation=2)
-        self.deconv_stage3=nn.ConvTranspose2d(144,1,kernel_size=5, stride=16, padding=0, output_padding=3, dilation=3)
-        self.deconv_stage4=nn.ConvTranspose2d(144,1,kernel_size=7, stride=32, padding=1, output_padding=3, dilation=5)
+        self.deconv_stage1=nn.ConvTranspose2d(128,1,kernel_size=3, stride=4, padding=0, output_padding=1, dilation=1)
+        self.deconv_stage2=nn.ConvTranspose2d(128,1,kernel_size=3, stride=8, padding=0, output_padding=3, dilation=2)
+        self.deconv_stage3=nn.ConvTranspose2d(128,1,kernel_size=5, stride=16, padding=0, output_padding=3, dilation=3)
+        self.deconv_stage4=nn.ConvTranspose2d(128,1,kernel_size=7, stride=32, padding=1, output_padding=3, dilation=5)
         self.last_conv=nn.Conv2d(4,1,1,1)
 
         
