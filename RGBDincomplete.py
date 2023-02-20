@@ -56,7 +56,7 @@ class RGBDInModule(nn.Module):
         x1= self.backbone(x)
         for i in range(len(x1)):
             print("stage",i,x1[i].shape)
-        a=[1,5,37,40]
+        a=[0,1,2,3]
         count=0
         for i in a:
             print(i,'The backbone features are',x1[i].shape)
