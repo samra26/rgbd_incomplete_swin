@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from cswin import CSWinTransformer
+from swin import SwinTransformer
 import torch.nn.functional as F
 from functools import partial
 from torchsummary import summary
@@ -14,7 +14,7 @@ from torch.utils.tensorboard import SummaryWriter
 from torchvision.utils import make_grid
 writer = SummaryWriter('log/run' + time.strftime("%d-%m"))
 im_size=(320,320)
-k_channels=[144,288,576,1152]
+k_channels=[128,256,512,1024]
 
 class FCU(nn.Module):
     """ Transformer patch embeddings -> CNN feature maps
@@ -54,12 +54,12 @@ class RGBDInModule(nn.Module):
     def forward(self, x):
         feature_stage=[]
         x,x1= self.backbone(x)
-        '''for i in range(len(x1)):
-            print("stage",i,x1[i].shape)'''
+        for i in range(len(x1)):
+            print("stage",i,x1[i].shape)
         a=[1,5,37,40]
         count=0
         for i in a:
-            #print(i,'The backbone features are',x1[i].shape)
+            print(i,'The backbone features are',x1[i].shape)
             x_r=eval('self.expand_block_' + str(count))(x1[i])
             #print(i,x_r.shape)
             count=count+1
@@ -98,22 +98,20 @@ class RGBD_incomplete(nn.Module):
         rgb_out2 = self.deconv_stage2(rgb_branch2)
         rgb_out3 = self.deconv_stage3(rgb_branch3)
         rgb_out4 = self.deconv_stage4(rgb_branch4)
-        '''print(rgb_branch1.shape,rgb_out1.shape)
+        print(rgb_branch1.shape,rgb_out1.shape)
         print(rgb_branch2.shape,rgb_out2.shape)
         print(rgb_branch3.shape,rgb_out3.shape)
-        print(rgb_branch4.shape,rgb_out4.shape)'''
+        print(rgb_branch4.shape,rgb_out4.shape)
         
         feat_rgb_out=self.last_conv(torch.cat((rgb_out1,rgb_out2,rgb_out3,rgb_out4),dim=1))
-        #print(feat_rgb_out.shape)
+        print(feat_rgb_out.shape)
         
         return feat_rgb_out
         
 
 
 def build_model(network='cswin', base_model_cfg='cswin'):
-    backbone = CSWinTransformer(patch_size=4, embed_dim=144, depth=[2,4,32,2],
-        split_size=[1,2,12,12], num_heads=[6,12,24,24], mlp_ratio=4.0)
-      
+    backbone = SwinTransformer(embed_dim=128, depths=[2,2,18,2], num_heads=[4,8,16,32])
    
 
     return RGBD_incomplete(RGBDInModule(backbone))
