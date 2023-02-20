@@ -53,7 +53,7 @@ class RGBDInModule(nn.Module):
 
     def forward(self, x):
         feature_stage=[]
-        x,x1= self.backbone(x)
+        x1= self.backbone(x)
         for i in range(len(x1)):
             print("stage",i,x1[i].shape)
         a=[1,5,37,40]
